@@ -1,0 +1,19 @@
+
+button_exit.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+exitDown
+  rotate: false
+  xy: 1, 1
+  size: 160, 88
+  orig: 160, 88
+  offset: 0, 0
+  index: -1
+exitUp
+  rotate: false
+  xy: 163, 1
+  size: 160, 88
+  orig: 160, 88
+  offset: 0, 0
+  index: -1

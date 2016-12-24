@@ -1,0 +1,47 @@
+
+letterSheet.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+letter_W
+  rotate: false
+  xy: 1, 282
+  size: 148, 138
+  orig: 148, 138
+  offset: 0, 0
+  index: -1
+letter_S
+  rotate: false
+  xy: 151, 281
+  size: 104, 139
+  orig: 104, 139
+  offset: 0, 0
+  index: -1
+letter_M
+  rotate: false
+  xy: 1, 141
+  size: 112, 139
+  orig: 112, 139
+  offset: 0, 0
+  index: -1
+letter_A
+  rotate: false
+  xy: 1, 1
+  size: 89, 138
+  orig: 89, 138
+  offset: 0, 0
+  index: -1
+letter_O
+  rotate: false
+  xy: 115, 141
+  size: 86, 138
+  orig: 86, 138
+  offset: 0, 0
+  index: -1
+letter_N
+  rotate: false
+  xy: 92, 1
+  size: 84, 138
+  orig: 84, 138
+  offset: 0, 0
+  index: -1
