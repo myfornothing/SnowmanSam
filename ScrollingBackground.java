@@ -1,4 +1,4 @@
-package com.fornothing.snowmansam.utilities;
+package com.fornothing.snowmansam.entities;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -6,11 +6,11 @@ import com.fornothing.snowmansam.MainClass;
 
 public final class ScrollingBackground {
 
-    public static final int DEFAULT_SPEED_1 = 100;  //100
-    public static final int DEFAULT_SPEED_2 = 82;  //82
+    public static final int DEFAULT_SPEED_1 = 102;  //100
+    public static final int DEFAULT_SPEED_2 = 80;  //82
     private static final int ACCELERATION = 58;     //58
-    private static final int GOAL_SPEED_1 = 230;    //230
-    private static final int GOAL_SPEED_2 = 200;    //200
+    private static final int GOAL_SPEED_1 = 260;    //230
+    private static final int GOAL_SPEED_2 = 230;    //200
 
     private Texture imageSnowflakes_1, imageSnowflakes_2;
     private float y1, y11, y2, y22;
@@ -21,9 +21,9 @@ public final class ScrollingBackground {
     private boolean speedFixed = true;
 
     public ScrollingBackground () {
-        imageSnowflakes_1 = new Texture("animations/snowflakes_falling_2.png");
-        imageSnowflakes_2 = new Texture("animations/snowflakes_falling_4.png");
-        imageScale = MainClass.V_WIDTH / imageSnowflakes_1.getWidth();
+        imageSnowflakes_1 = new Texture("animations/snowflakes_falling_big.png");
+        imageSnowflakes_2 = new Texture("animations/snowflakes_falling_small.png");
+        imageScale = imageSnowflakes_1.getWidth() / MainClass.V_WIDTH;
 
         y1 = -MainClass.V_HEIGHT;
         y11 = -MainClass.V_HEIGHT;

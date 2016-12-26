@@ -5,11 +5,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.fornothing.snowmansam.MainClass;
 import com.fornothing.snowmansam.utilities.CollisionRect;
 
-public class Spike {
-
-    public static int getInitialSpeed() {
-        return INITIAL_SPEED;
-    }
+public final class Spike {
 
     private static final int INITIAL_SPEED = 20;
     private static final int ACCELERATION = 175;
@@ -30,11 +26,9 @@ public class Spike {
         y = MainClass.V_HEIGHT;
         speed = INITIAL_SPEED;
         goalspeed = GOAL_SPEED;
-        this.rect = new CollisionRect(x, y, WIDTH, HEIGHT);
 
-        if (spikeTexture == null) {
-            spikeTexture = new Texture("images/Ice_Spike_1.png");
-        }
+        spikeTexture = new Texture("images/Ice_Spike_1.png");
+
         this.rect = new CollisionRect(
                 x + spikeTexture.getWidth() /2,
                 y + spikeTexture.getHeight() * 0.2f,
@@ -71,4 +65,5 @@ public class Spike {
     public float getY() {
         return y;
     }
+
 }
