@@ -155,7 +155,7 @@ public class SplashScreen implements Screen {
                 parallel(fadeIn(.5f), moveBy(80, -350, 2f, Interpolation.pow5Out))));
 
         //Snowman bounce-in
-        snowman.setPosition(V_WIDTH *0.4f, V_HEIGHT  - snowman.getImageHeight());
+        snowman.setPosition(V_WIDTH *0.4f, V_HEIGHT  * 1.5f);
         snowman.addAction(sequence(alpha(0), scaleTo(.01f, .01f),
                 parallel(fadeIn(1f, Interpolation.pow2),
                         scaleTo(1.5f, 1.5f, 3f, Interpolation.swingIn),

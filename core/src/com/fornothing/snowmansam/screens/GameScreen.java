@@ -14,6 +14,7 @@ import com.fornothing.snowmansam.entities.SnowmanHit;
 import com.fornothing.snowmansam.entities.Spike;
 import com.fornothing.snowmansam.utilities.CollisionRect;
 import com.fornothing.snowmansam.utilities.GameCamera;
+import com.fornothing.snowmansam.utilities.Hud;
 import com.fornothing.snowmansam.utilities.PlayerMovement;
 
 import java.util.ArrayList;
@@ -31,7 +32,7 @@ public class GameScreen implements Screen {
     private MainClass main;
 
     public static float PLAYER_SPEED = 350;
-    private static final float HEALTH_DROP_RATE = 0.25f;  // 1= FULL
+    private static final float HEALTH_DROP_RATE = 0.2f;  // 1= FULL
     private static final float ANIMATION_SPEED = 0.5f;
     private static final int SNOWMAN_PXL_WIDTH = 96;
     private static final int SNOWMAN_PXL_HEIGHT = 96;
@@ -65,6 +66,8 @@ public class GameScreen implements Screen {
     private float defaultYPosition = V_HEIGHT * 0.2f - SNOWMAN_HEIGHT /2;
     private float offsetYPosition = -V_HEIGHT - SNOWMAN_HEIGHT;
 
+    private Hud hud;
+    public static int FINAL_PLAY_SCORE;
 
     public GameScreen(MainClass main) {
         this.main = main;
@@ -83,7 +86,8 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
-        TextureRegion[] snowmanSamSheet = TextureRegion.split(new Texture("animations/SnowmanSamSheet4g.png"),
+        TextureRegion[] snowmanSamSheet = TextureRegion.split
+                (new Texture("animations/SnowmanSheet_Scarf.png"),
                 SNOWMAN_PXL_WIDTH, SNOWMAN_PXL_HEIGHT)[0];
 
         turns[0] = new Animation(ANIMATION_SPEED, snowmanSamSheet[0]); //TURN left
@@ -106,12 +110,15 @@ public class GameScreen implements Screen {
         floorImageScale = imageFloor.getWidth() / (V_WIDTH /2);
 
         healthBlank = new Texture("images/health_blank.png");
+
+        hud = new Hud(main.batch);
     }
 
     @Override  //Update and Render
     public void render(float delta) {
 
         PlayerMovement.handleInput(delta);
+        hud.update(delta);
 
         //Spikes spawn code
         SPIKE_SPAWN_TIMER -= delta;
@@ -207,6 +214,8 @@ public class GameScreen implements Screen {
         for (SnowballRotate snowballsRotate : snowballs) {
             if (snowballsRotate.getCollisionRect().collidesWith(playerRect)) {
                 snowballsToRemove.add(snowballsRotate);
+                Hud.addScore(1);
+                FINAL_PLAY_SCORE += 1;
                 if (health >= 1){
                     health = 1;
                 }else
@@ -249,10 +258,12 @@ public class GameScreen implements Screen {
         for (SnowmanHit snowmanHits : snowmanHit) {
             snowmanHits.render(main.batch);
         }
+
         //draw floor
         main.batch.draw(imageFloor, 0,  y - (imageFloor.getHeight() ),
                 (V_WIDTH /2) * floorImageScale,
                 (imageFloor.getHeight() /2) * floorImageScale);
+
         //health color change
         if (health > 0.5f)
             main.batch.setColor(0, 1, 0, 0.5f);
@@ -262,11 +273,13 @@ public class GameScreen implements Screen {
             main.batch.setColor(1, 0, 0, 0.9f);
         //draw health
         main.batch.draw(healthBlank, 0,
-                V_HEIGHT * 0.99f,
+                V_HEIGHT * 0.965f,
                 V_WIDTH * 0.99f * health,
-                V_HEIGHT * 0.01f);
+                V_HEIGHT * 0.03f);
         main.batch.setColor(Color.WHITE);
+
         main.batch.end();
+        hud.hudStage.draw();
     }
 
     private static float getMaxSpikeSpawnTime() {
@@ -274,6 +287,12 @@ public class GameScreen implements Screen {
     }
     private static void setMaxSpikeSpawnTime(float maxSpikeSpawnTime) {
         MAX_SPIKE_SPAWN_TIME = maxSpikeSpawnTime;
+    }
+    public static int getFinalPlayScore() {
+        return FINAL_PLAY_SCORE;
+    }
+    public static void resetFinalPlayScore(){
+        FINAL_PLAY_SCORE = 0;
     }
 
     @Override

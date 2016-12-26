@@ -31,7 +31,7 @@ public final class SnowmanHit {
 
 //        if (animation == null)
             animation = new Animation(FRAME_LENGTH,
-                    TextureRegion.split(new Texture("animations/SnowmanSam_HIT4.png"),
+                    TextureRegion.split(new Texture("animations/SnowmanHit_Scarf.png"),
                             IMAGE_SIZE, IMAGE_SIZE)[0]);
     }
 
