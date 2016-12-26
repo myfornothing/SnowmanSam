@@ -2,16 +2,16 @@ package com.fornothing.snowmansam;
 
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.assets.AssetManager;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
+import com.fornothing.snowmansam.entities.ScrollingBackground;
 import com.fornothing.snowmansam.screens.GameOverScreen;
 import com.fornothing.snowmansam.screens.GameScreen;
 import com.fornothing.snowmansam.screens.LoadingScreen;
+import com.fornothing.snowmansam.screens.SplashScreen;
 import com.fornothing.snowmansam.utilities.GameCamera;
-import com.fornothing.snowmansam.utilities.ScrollingBackground;
 
 public class MainClass extends Game {
 	public static final String APP_TITLE = "SnowmanSam";
@@ -26,13 +26,13 @@ public class MainClass extends Game {
     public ShapeRenderer shapeRenderer;
 	public ScrollingBackground scrollingBackground;
 
+	public SplashScreen splashScreen;
 	public LoadingScreen loadingScreen;
     public GameScreen gameScreen;
     public GameOverScreen gameOverScreen;
 
-	public GameCamera gameCamera;
+	public static GameCamera gameCamera;  // made static for shake
     public static AssetManager assets;
-
 
 	@Override
 	public void create () {
@@ -44,13 +44,14 @@ public class MainClass extends Game {
 		gameCamera = new GameCamera(V_WIDTH, V_HEIGHT);
 
         //game screens
+        splashScreen = new SplashScreen(this);
 		loadingScreen = new LoadingScreen(this);
         gameScreen = new GameScreen(this);
 		gameOverScreen = new GameOverScreen(this);
 
 		//initFonts();
 
-		this.setScreen(new GameScreen(this));
+		this.setScreen(new SplashScreen(this));
 	}
 
 	@Override
@@ -61,21 +62,16 @@ public class MainClass extends Game {
 		super.render();
 	}
 
-	// Touch & Spacebar Input
-	public static void handleInput(float delta) {
-		if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
-			//this.setScreen(gameScreen);
-			Gdx.app.exit();
-		}
-	}
-
 	@Override
 	public void resize(int width, int height) {
 		this.scrollingBackground.resize(width, height);
 		super.resize(width, height);
 	}
 
-	@Override
+    @Override
+    public void resume() {  }
+
+    @Override
 	public void dispose () {
 		super.dispose(); System.out.println("super dispose");
 		batch.dispose(); System.out.println("batch dispose");
