@@ -29,13 +29,13 @@ import static com.fornothing.snowmansam.MainClass.V_WIDTH;
 public class SplashScreen implements Screen {
 
     private final MainClass main;
-    public static OrthographicCamera camera;
+    private static OrthographicCamera camera;
     private Stage stage;
 
     private Image background, snowman;
 
-    private Image letter_S, letter_N, letter_O, letter_W, letter_M, letter_A;
-    private Image letter_N2, letter_S2, letter_A2, letter_M2;
+    private Image letter_S, letter_N, letter_O, letter_W, letter_M, letter_A,
+            letter_N2, letter_S2, letter_A2, letter_M2;
 
     public SplashScreen(MainClass main) {
         this.main = main;
@@ -91,7 +91,7 @@ public class SplashScreen implements Screen {
             @Override
             public void run() {
 //                main.setScreen(new SplashScreen(main));
-                main.setScreen(main.loadingScreen);
+                main.setScreen(main.gameScreen);
             }
         };
 

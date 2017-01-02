@@ -14,32 +14,30 @@ import java.util.Locale;
 public class Hud  {
 
     public final Stage hudStage;
-//    private final OrthographicCamera gamecam;
-//    private final Viewport hudViewport;
     public static Integer score;
     public final Label scoreLabel;
     public static Label scoreCountLabel;
+    public static int FINAL_PLAY_SCORE;
+
 
     public Hud(SpriteBatch sb) {
         score = 0;
-//        gamecam = new OrthographicCamera();
         hudStage = new Stage(new FitViewport(MainClass.V_WIDTH, MainClass.V_HEIGHT));
-//        hudViewport = new FitViewport(MainClass.V_WIDTH, MainClass.V_HEIGHT);
 
         scoreLabel = new Label("Score", new Label.LabelStyle(FontGenerator.Flatwheat,
             Color.WHITE));
-        scoreLabel.setFontScale(.8f);
+        scoreLabel.setFontScale(1f);
 
         scoreCountLabel = new Label(String.format(Locale.US, "0", score),
                 new Label.LabelStyle(FontGenerator.Flatwheat, Color.WHITE));
-        scoreCountLabel.setFontScale(.8f);
+        scoreCountLabel.setFontScale(1f);
 
     //HUD TABLE
         Table table = new Table();
         table.top().left();
         table.setFillParent(true);
-        table.top().add(scoreLabel).padTop(hudStage.getHeight() * 0.05f).padRight(40);
-        table.add(scoreCountLabel).padTop(hudStage.getHeight() * 0.05f);
+        table.top().add(scoreLabel).padTop(hudStage.getHeight() * 0.05f).padLeft(10);
+        table.add(scoreCountLabel).padTop(hudStage.getHeight() * 0.05f).padLeft(20);
         hudStage.addActor(table);
     }
 
@@ -55,6 +53,13 @@ public class Hud  {
 
     public static Label getScoreCountLabel() { return scoreCountLabel; }
     public static Integer getScore() { return score; }
+
+    public static int getFinalPlayScore() {
+        return FINAL_PLAY_SCORE;
+    }
+    public static void resetFinalPlayScore(){
+        FINAL_PLAY_SCORE = 0;
+    }
 
     public void dispose(){
         hudStage.dispose();

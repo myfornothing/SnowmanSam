@@ -5,15 +5,16 @@ import com.badlogic.gdx.Input;
 import com.fornothing.snowmansam.MainClass;
 
 import static com.fornothing.snowmansam.MainClass.V_WIDTH;
-import static com.fornothing.snowmansam.screens.GameScreen.SNOWMAN_WIDTH;
 import static com.fornothing.snowmansam.screens.GameScreen.PLAYER_SPEED;
+import static com.fornothing.snowmansam.screens.GameScreen.SNOWMAN_WIDTH;
 import static com.fornothing.snowmansam.screens.GameScreen.TURN;
 import static com.fornothing.snowmansam.screens.GameScreen.x;
 
-public class PlayerMovement {
+public abstract class PlayerMovement {
 
     private static float TURN_TIMER_SWITCH_TIME = 0.15f;
     private static float turnTimer = 0;
+
 
     public static void handleInput(float delta) {
         if (Gdx.input.isKeyPressed(Input.Keys.ESCAPE)) {
@@ -47,7 +48,6 @@ public class PlayerMovement {
                 }
             }
         }
-
         if (isRight()) { //Right pressed
             x += PLAYER_SPEED * Gdx.graphics.getDeltaTime();
             if (x + SNOWMAN_WIDTH > V_WIDTH)
@@ -75,11 +75,11 @@ public class PlayerMovement {
         }
     }
 
-    private static boolean isRight () {
+    public static boolean isRight () {
         return Gdx.input.isKeyPressed(Input.Keys.RIGHT) || (Gdx.input.isTouched()
                 && MainClass.gameCamera.getInputInGameWorld().x >= V_WIDTH /2);
     }
-    private static boolean isLeft () {
+    public static boolean isLeft () {
         return Gdx.input.isKeyPressed(Input.Keys.LEFT) || (Gdx.input.isTouched()
                 && MainClass.gameCamera.getInputInGameWorld().x < V_WIDTH / 2);
     }

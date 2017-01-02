@@ -29,10 +29,9 @@ public final class SnowmanHit {
         this.y = y ;
         statetime = 0;
 
-//        if (animation == null)
-            animation = new Animation(FRAME_LENGTH,
-                    TextureRegion.split(new Texture("animations/SnowmanHit_Scarf.png"),
-                            IMAGE_SIZE, IMAGE_SIZE)[0]);
+        animation = new Animation(FRAME_LENGTH,
+                TextureRegion.split(new Texture("animations/SnowmanHit_Scarf.png"),
+                        IMAGE_SIZE, IMAGE_SIZE)[0]);
     }
 
     public void update (float deltaTime) {
