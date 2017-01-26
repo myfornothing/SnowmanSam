@@ -25,6 +25,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.scaleTo;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 import static com.fornothing.snowmansam.MainClass.V_HEIGHT;
 import static com.fornothing.snowmansam.MainClass.V_WIDTH;
+import static com.fornothing.snowmansam.MainClass.musicIntro;
 
 public class SplashScreen implements Screen {
 
@@ -47,6 +48,11 @@ public class SplashScreen implements Screen {
 
     @Override
     public void show() {
+        if(MainClass.getmusicOnOff()) {
+            musicIntro.play();
+        }else {
+            musicIntro.pause();
+        }
 
         background = new Image(new Texture("images/background.png"));
         background.setOrigin(-background.getWidth(), -background.getHeight() );
@@ -90,7 +96,6 @@ public class SplashScreen implements Screen {
         Runnable transitionRunnable = new Runnable() {
             @Override
             public void run() {
-//                main.setScreen(new SplashScreen(main));
                 main.setScreen(main.gameScreen);
             }
         };
@@ -189,11 +194,13 @@ public class SplashScreen implements Screen {
     @Override
     public void hide() {
         System.out.println("SplashScr hide...");
-        dispose();
+        MainClass.musicIntro.dispose();
+        SplashScreen.this.dispose();
     }
     @Override
     public void dispose() {
         System.out.println("SplashScr dispose...");
+        MainClass.musicIntro.dispose();
         stage.dispose();
     }
 }

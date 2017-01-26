@@ -1,0 +1,19 @@
+
+musicOnOff.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+MusicOff_icon
+  rotate: false
+  xy: 1, 1
+  size: 110, 124
+  orig: 110, 124
+  offset: 0, 0
+  index: -1
+MusicOn_icon
+  rotate: false
+  xy: 113, 1
+  size: 110, 124
+  orig: 110, 124
+  offset: 0, 0
+  index: -1

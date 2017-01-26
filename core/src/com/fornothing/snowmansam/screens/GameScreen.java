@@ -18,6 +18,7 @@ import com.fornothing.snowmansam.entities.Spike;
 import com.fornothing.snowmansam.utilities.CollisionRect;
 import com.fornothing.snowmansam.utilities.GameCamera;
 import com.fornothing.snowmansam.utilities.Hud;
+import com.fornothing.snowmansam.utilities.PauseMenu;
 import com.fornothing.snowmansam.utilities.PlayerMovement;
 
 import java.util.ArrayList;
@@ -25,8 +26,18 @@ import java.util.Random;
 
 import static com.fornothing.snowmansam.MainClass.V_HEIGHT;
 import static com.fornothing.snowmansam.MainClass.V_WIDTH;
+import static com.fornothing.snowmansam.MainClass.collectSound;
 import static com.fornothing.snowmansam.MainClass.gameCamera;
+import static com.fornothing.snowmansam.MainClass.hitSound;
+import static com.fornothing.snowmansam.MainClass.hitSound_Dead;
+import static com.fornothing.snowmansam.MainClass.musicLoop;
+import static com.fornothing.snowmansam.MainClass.musicVolHigh;
+import static com.fornothing.snowmansam.MainClass.musicVolLow;
 import static com.fornothing.snowmansam.entities.SnowmanHit.getGotHit;
+import static com.fornothing.snowmansam.entities.Spike.MAX_SPIKE_SPAWN_TIME;
+import static com.fornothing.snowmansam.entities.Spike.MIN_SPIKE_SPAWN_TIME;
+import static com.fornothing.snowmansam.entities.Spike.SPIKE_INCREASE_NUMBER;
+import static com.fornothing.snowmansam.entities.Spike.SPIKE_SPAWN_TIMER;
 import static com.fornothing.snowmansam.entities.Spike.getSpikeCount;
 import static com.fornothing.snowmansam.entities.Spike.spikeCount;
 import static com.fornothing.snowmansam.utilities.Hud.FINAL_PLAY_SCORE;
@@ -36,17 +47,11 @@ public class GameScreen implements Screen {
 
     public static float PLAYER_SPEED = 350;
     private static final float HEALTH_DROP_RATE = 0.2f;  // 1= FULL
-    public static final float ANIMATION_SPEED = 0.5f;
+    private static final float ANIMATION_SPEED = 0.5f;
     private static final int SNOWMAN_PXL_WIDTH = 96;
     private static final int SNOWMAN_PXL_HEIGHT = 96;
     public static final int SNOWMAN_WIDTH = SNOWMAN_PXL_WIDTH ;
     public static final int SNOWMAN_HEIGHT = SNOWMAN_PXL_HEIGHT ;
-
-    private static float MIN_SPIKE_SPAWN_TIME = 0f;
-    public static float MAX_SPIKE_SPAWN_TIME_DEFAULT = 1f;
-    public static float MAX_SPIKE_SPAWN_TIME = MAX_SPIKE_SPAWN_TIME_DEFAULT;
-    public static int SPIKE_INCREASE_NUMBER = 15;
-    private static float SPIKE_SPAWN_TIMER;
 
     private static Random RANDOM;
     public static int TURN;
@@ -61,7 +66,7 @@ public class GameScreen implements Screen {
     private Texture healthBlank;
     public static float health = 1;
 
-    private boolean showControls = true;
+    private static boolean showControls = true;
     private Texture controls, controlsInstructions;
     private static final float CTRL_WAIT_TIME = 0.3f;
     private float ctrlTimer = 0;
@@ -78,11 +83,13 @@ public class GameScreen implements Screen {
     private float offsetYPosition = -V_HEIGHT - SNOWMAN_HEIGHT;
 
     private Hud hud;
+    private PauseMenu pauseMenu;
 
 
     public GameScreen(MainClass main) {
         this.main = main;
         gameCamera = new GameCamera(V_WIDTH, V_HEIGHT);
+
         TURN = 2;
         turns = new Animation[5];
 
@@ -96,6 +103,7 @@ public class GameScreen implements Screen {
 
     @Override
     public void show() {
+
         TextureRegion[] snowmanSamSheet = TextureRegion.split(
                 new Texture("animations/SnowmanSheet_Scarf.png"),
                 SNOWMAN_PXL_WIDTH, SNOWMAN_PXL_HEIGHT)[0];
@@ -115,11 +123,13 @@ public class GameScreen implements Screen {
 
         imageFloor = new Texture("images/iceblockFloor.png");
         floorImageScale = imageFloor.getWidth() / (V_WIDTH /2);
+
         healthBlank = new Texture("images/health_blank.png");
         controls = new Texture("ui/controls_2.png");
-        controlsInstructions = new Texture("ui/controls_instructions.png");
+        controlsInstructions = new Texture("ui/controls_instructions3.png");
 
         hud = new Hud(main.batch);
+        pauseMenu = new PauseMenu(main.batch);
         RANDOM = new Random();
 
         SPIKE_SPAWN_TIMER = RANDOM.nextFloat() *
@@ -130,10 +140,17 @@ public class GameScreen implements Screen {
     public void render(float delta) {
 
         //Scrolling background ? FIXED SPEED
-        if (showControls){
+        if (showControls) {
             MainClass.scrollingBackground.setSpeedFixed(true);
             MainClass.scrollingBackground.setSpeed_1(ScrollingBackground.DEFAULT_SPEED_1);
             MainClass.scrollingBackground.setSpeed_2(ScrollingBackground.DEFAULT_SPEED_2);
+            musicLoop.setVolume(musicVolLow);
+            musicLoop.setLooping(true);
+            if (MainClass.getmusicOnOff()) {
+                musicLoop.play();
+            }else{
+                musicLoop.pause();
+            }
         } else
             MainClass.scrollingBackground.setSpeedFixed(false);
 
@@ -143,18 +160,21 @@ public class GameScreen implements Screen {
                 ctrlTimer >= CTRL_WAIT_TIME) {
             ctrlTimer = 0;
             showControls = false;
+            musicLoop.setVolume(musicVolHigh);
         }
 
         PlayerMovement.handleInput(delta);
         hud.update(delta);
+        pauseMenu.update(delta);
 
         //Spikes spawn code
-        SPIKE_SPAWN_TIMER -= delta;
-        if (SPIKE_SPAWN_TIMER <= 0 && !showControls) {
-            SPIKE_SPAWN_TIMER = RANDOM.nextFloat() *
-                    (MAX_SPIKE_SPAWN_TIME - MIN_SPIKE_SPAWN_TIME) + MIN_SPIKE_SPAWN_TIME;
-            spikes.add(new Spike(RANDOM.nextInt(V_WIDTH) - (Spike.WIDTH /2)));
-        }
+        if (!PauseMenu.showPause) {   //PAUSE MENU
+            SPIKE_SPAWN_TIMER -= delta;
+            if (SPIKE_SPAWN_TIMER <= 0 && !showControls) {
+                SPIKE_SPAWN_TIMER = RANDOM.nextFloat() *
+                        (MAX_SPIKE_SPAWN_TIME - MIN_SPIKE_SPAWN_TIME) + MIN_SPIKE_SPAWN_TIME;
+                spikes.add(new Spike(RANDOM.nextInt(V_WIDTH) - (Spike.WIDTH / 2)));
+            }
 
         //Snowball spawn code
         if (showControls)
@@ -165,7 +185,7 @@ public class GameScreen implements Screen {
                     (SnowballRotate.MAX_SNOWBALL_SPAWN_TIME - SnowballRotate.MIN_SNOWBALL_SPAWN_TIME) +
                     SnowballRotate.MIN_SNOWBALL_SPAWN_TIME;
             snowballs.add(new SnowballRotate(
-                    RANDOM.nextInt( V_WIDTH - SnowballRotate.IMAGE_SIZE), V_HEIGHT));
+                    RANDOM.nextInt(V_WIDTH - SnowballRotate.IMAGE_SIZE), V_HEIGHT));
         }
 
         //Snowflake spawn code
@@ -177,8 +197,9 @@ public class GameScreen implements Screen {
                     (SnowflakeRotate.MAX_SNOWFLAKE_SPAWN_TIME - SnowflakeRotate.MIN_SNOWFLAKE_SPAWN_TIME) +
                     SnowflakeRotate.MIN_SNOWFLAKE_SPAWN_TIME;
             snowflakes.add(new SnowflakeRotate(
-                    RANDOM.nextInt( V_WIDTH - SnowflakeRotate.IMAGE_SIZE), V_HEIGHT));
+                    RANDOM.nextInt(V_WIDTH - SnowflakeRotate.IMAGE_SIZE), V_HEIGHT));
         }
+    }
 
         //Update spikes
         ArrayList<Spike> spikesToRemove = new ArrayList<Spike>();
@@ -257,10 +278,22 @@ public class GameScreen implements Screen {
 
                 if (health >= 0) {
                     snowmanHit.add(new SnowmanHit(x, y));
+                    if (MainClass.getsoundOnOff()) {
+                        long idSnowmanHitSound = hitSound.play(musicVolHigh);
+                        hitSound.setPitch(idSnowmanHitSound, 2f);
+                    }
+                    Gdx.input.vibrate(100);
                 }else {
                     snowmanDeath.add(new SnowmanDead(x, y));
+                    if (MainClass.getsoundOnOff()) {
+                        long idSnowmanHitSound_Dead = hitSound_Dead.play(musicVolHigh);
+                        hitSound_Dead.setPitch(idSnowmanHitSound_Dead, 1f);
+                    }
+                    Gdx.input.vibrate(1000);
                 }
                 if (health < 0 && SnowmanDead.isDead){
+                    SnowmanHit.setGotHit(2);
+                    MainClass.musicLoop.stop();
                     main.setScreen(new GameOverScreen(main));
                 }
             }
@@ -283,6 +316,12 @@ public class GameScreen implements Screen {
                     health = 1;
                 }else
                 health += 0.05f;
+                if (MainClass.getsoundOnOff()) {
+                    long idSnowballSound = collectSound.play();
+                    collectSound.setVolume(idSnowballSound, musicVolHigh);
+                    collectSound.setPitch(idSnowballSound, 2f);
+                }
+                Gdx.input.vibrate(50);
             }
         }
 
@@ -296,6 +335,12 @@ public class GameScreen implements Screen {
                     health = 1;
                 }else
                     health += 0.1f;
+                if (MainClass.getsoundOnOff()) {
+                    long idSnowballSound = collectSound.play();
+                    collectSound.setVolume(idSnowballSound, musicVolHigh);
+                    collectSound.setPitch(idSnowballSound, 1f);
+                }
+                Gdx.input.vibrate(50);
             }
         }
 
@@ -318,8 +363,10 @@ public class GameScreen implements Screen {
         main.batch.setProjectionMatrix(gameCamera.combined());
 
         main.batch.begin();
-        //draw BACKGROUND
+
+        //draw SCROLLING BACKGROUND
         MainClass.scrollingBackground.updateAndRender(delta, main.batch);
+
         //draw SPIKES
         for (Spike spike : spikes) { spike.render(main.batch); }
         //draw explosions
@@ -328,6 +375,7 @@ public class GameScreen implements Screen {
         for (SnowballRotate snowballsRotate : snowballs) { snowballsRotate.render(main.batch); }
         //draw SNOWFLAKES
         for (SnowflakeRotate snowflakesRotate : snowflakes) { snowflakesRotate.render(main.batch); }
+
         //draw SNOWMAN playing and hit reposition
         switch (getGotHit()) { //1=default, 2=HIT
             case 1: main.batch.draw(turns[TURN].getKeyFrame(stateTime, true),
@@ -342,15 +390,15 @@ public class GameScreen implements Screen {
         //draw snowman DEATH
         for (SnowmanDead snowmanDeaths : snowmanDeath) { snowmanDeaths.render(main.batch); }
         //draw FLOOR
-        main.batch.draw(imageFloor, 0,  y - (imageFloor.getHeight() ),
+        main.batch.draw(imageFloor, 0,  y - imageFloor.getHeight(),
                 (V_WIDTH /2) * floorImageScale,
                 (imageFloor.getHeight() /2) * floorImageScale);
 
         //health color change
         if (health > 0.5f)
-            main.batch.setColor(0, 1, 0, 0.5f);
-        else if (health > 0.2f)
-            main.batch.setColor(0.8f, 0.4f, 0, 0.7f);
+            main.batch.setColor(0f, 1, 0f, 0.75f);
+        else if (health > 0.25f)
+            main.batch.setColor(0.8f, 0.4f, 0, 0.9f);
         else
             main.batch.setColor(1, 0, 0, 0.9f);
         //draw HEALTH
@@ -376,13 +424,19 @@ public class GameScreen implements Screen {
                     V_WIDTH, V_HEIGHT, false, false);
 
             main.batch.setColor(Color.WHITE);
+        }
 
+        if (PauseMenu.showPause) {
+            main.batch.draw(PauseMenu.pauseOverlay, 0, 0, V_WIDTH, V_HEIGHT, 0, 0,
+                    V_WIDTH, V_HEIGHT, false, false);
         }
 
         main.batch.end();
+
         //draw HUD
         if (!showControls){
             hud.hudStage.draw();
+            pauseMenu.pauseStage.draw();
         }
     }
 
@@ -390,9 +444,11 @@ public class GameScreen implements Screen {
         return MAX_SPIKE_SPAWN_TIME;
     }
     private static void setMaxSpikeSpawnTime(float maxSpikeSpawnTime) {
-        MAX_SPIKE_SPAWN_TIME = maxSpikeSpawnTime;
-    }
+        MAX_SPIKE_SPAWN_TIME = maxSpikeSpawnTime; }
 
+    public static boolean isShowControls() { return showControls; }
+    public static void setShowControls(boolean showControls) {
+        GameScreen.showControls = showControls; }
 
     @Override
     public void resize(int width, int height) {  }
@@ -401,8 +457,10 @@ public class GameScreen implements Screen {
     @Override
     public void resume() { System.out.println("GameScreen resume..."); }
     @Override
-    public void hide() { System.out.println("GameScreen hide..."); }
+    public void hide() { System.out.println("GameScreen hide...");
+        musicLoop.stop(); }
     @Override
-    public void dispose() { System.out.println("GameScreen dispose..."); }
+    public void dispose() { System.out.println("GameScreen dispose...");
+        hitSound_Dead.dispose(); }
 
 }

@@ -23,10 +23,9 @@ public final class ExplodeIce {
         this.y = y - OFFSET;
         statetime = 0;
 
-//        if (animation == null)
-            animation = new Animation(FRAME_LENGTH,
-                    TextureRegion.split(new Texture("animations/explode_spike2.png"),
-                            IMAGE_SIZE, IMAGE_SIZE)[0]);
+        animation = new Animation(FRAME_LENGTH,
+                TextureRegion.split(new Texture("animations/explode_spike2.png"),
+                        IMAGE_SIZE, IMAGE_SIZE)[0]);
     }
 
     public void update (float deltaTime) {

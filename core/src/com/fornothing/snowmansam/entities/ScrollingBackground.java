@@ -49,10 +49,6 @@ public final class ScrollingBackground {
                 if (speed_1 > goalSpeed_1) {
                     speed_1 = goalSpeed_1;
                 }
-//        } else if (speed_1 > goalSpeed_1) {
-//            speed_1 -= ACCELERATION * deltaTime;
-//            if (speed_1 < goalSpeed_1)
-//                speed_1 = goalSpeed_1;
             }
             if (speed_2 < goalSpeed_2) {
                 speed_2 += ACCELERATION * deltaTime;

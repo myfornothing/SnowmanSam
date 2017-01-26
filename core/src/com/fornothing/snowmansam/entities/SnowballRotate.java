@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.fornothing.snowmansam.MainClass;
 import com.fornothing.snowmansam.utilities.CollisionRect;
+import com.fornothing.snowmansam.utilities.PauseMenu;
 
 public final class SnowballRotate {
 
@@ -54,11 +55,23 @@ public final class SnowballRotate {
         statetime += deltaTime;
         //Speed adjustment to reach goal
         if (speed < goalspeed) {
-            speed += ACCELERATION * deltaTime;
+            switch (PauseMenu.getIsPaused()) {
+                case 1: speed += ACCELERATION * deltaTime;
+                    break;
+                case 2: speed = 0;
+                    break;
+            }
             if (speed > goalspeed)
                 speed = goalspeed;
         }
-        speed += ACCELERATION * deltaTime;
+        switch (PauseMenu.getIsPaused()) {
+            case 1:
+                speed += ACCELERATION * deltaTime;
+                break;
+            case 2:
+                speed = 0;
+                break;
+        }
         y -= speed * deltaTime;
         if (y < -MainClass.V_HEIGHT) {
             remove = true;

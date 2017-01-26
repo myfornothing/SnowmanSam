@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureRegion;
 import com.fornothing.snowmansam.MainClass;
 import com.fornothing.snowmansam.utilities.CollisionRect;
+import com.fornothing.snowmansam.utilities.PauseMenu;
 
 public final class SnowflakeRotate {
 
@@ -54,18 +55,29 @@ public final class SnowflakeRotate {
         statetime += deltaTime;
         //Speed adjustment to reach goal
         if (speed < goalspeed) {
-            speed += ACCELERATION * deltaTime;
+            switch (PauseMenu.getIsPaused()) {
+                case 1: speed += ACCELERATION * deltaTime;
+                    break;
+                case 2: speed = 0;
+                    break;
+            }
             if (speed > goalspeed)
                 speed = goalspeed;
         }
-        speed += ACCELERATION * deltaTime;
+        switch (PauseMenu.getIsPaused()) {
+            case 1:
+                speed += ACCELERATION * deltaTime;
+                break;
+            case 2:
+                speed = 0;
+                break;
+        }
         y -= speed * deltaTime;
         if (y < -MainClass.V_HEIGHT) {
             remove = true;
         }
         rect.move(x, y);
     }
-
     public void render (SpriteBatch batch) {
         batch.draw(animation.getKeyFrame(statetime, true), x, y, SCALE_SIZE, SCALE_SIZE);
     }

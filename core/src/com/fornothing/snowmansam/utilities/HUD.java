@@ -11,14 +11,14 @@ import com.fornothing.snowmansam.MainClass;
 
 import java.util.Locale;
 
-public class Hud  {
+public final class Hud  {
 
     public final Stage hudStage;
-    public static Integer score;
-    public final Label scoreLabel;
-    public static Label scoreCountLabel;
+    private static Integer score;
+    private final Label scoreLabel;
+    private final Label healthLabel;
+    private static Label scoreCountLabel;
     public static int FINAL_PLAY_SCORE;
-
 
     public Hud(SpriteBatch sb) {
         score = 0;
@@ -28,6 +28,10 @@ public class Hud  {
             Color.WHITE));
         scoreLabel.setFontScale(1f);
 
+        healthLabel = new Label("health", new Label.LabelStyle(FontGenerator.Flatwheat,
+                Color.WHITE));
+        healthLabel.setFontScale(0.7f);
+
         scoreCountLabel = new Label(String.format(Locale.US, "0", score),
                 new Label.LabelStyle(FontGenerator.Flatwheat, Color.WHITE));
         scoreCountLabel.setFontScale(1f);
@@ -36,20 +40,23 @@ public class Hud  {
         Table table = new Table();
         table.top().left();
         table.setFillParent(true);
-        table.top().add(scoreLabel).padTop(hudStage.getHeight() * 0.05f).padLeft(10);
-        table.add(scoreCountLabel).padTop(hudStage.getHeight() * 0.05f).padLeft(20);
+        table.top().left().add(healthLabel).padTop(hudStage.getHeight() * 0.03f);
+        table.row();
+        table.add(scoreLabel).padTop(hudStage.getHeight() * 0.01f).padLeft(12);
+        table.add(scoreCountLabel).padTop(hudStage.getHeight() * 0.01f).padLeft(22);
+
         hudStage.addActor(table);
+    }
+
+    public static void addScore(int value){
+        score += value;
+        scoreCountLabel.setText(String.format(Locale.US,"%01d", score));
     }
 
     //Timer
     public void update(float dt){  }
 
     public void render(SpriteBatch sb) {  }
-
-    public static void addScore(int value){
-        score += value;
-        scoreCountLabel.setText(String.format(Locale.US,"%01d", score));
-    }
 
     public static Label getScoreCountLabel() { return scoreCountLabel; }
     public static Integer getScore() { return score; }
