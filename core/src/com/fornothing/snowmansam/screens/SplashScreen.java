@@ -164,7 +164,7 @@ public class SplashScreen implements Screen {
         snowman.addAction(sequence(alpha(0), scaleTo(.01f, .01f),
                 parallel(fadeIn(1f, Interpolation.pow2),
                         scaleTo(1.5f, 1.5f, 3f, Interpolation.swingIn),
-                        moveTo(V_WIDTH * 0.3f, V_HEIGHT * .25f,
+                        moveTo(V_WIDTH * 0.3f, V_HEIGHT * .2f,
                                 3f, Interpolation.bounceIn))));
         //Stage fade away
         stage.addAction(sequence(delay(3.5f), alpha(1), parallel(fadeOut(1f, Interpolation.pow2),

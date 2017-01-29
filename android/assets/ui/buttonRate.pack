@@ -1,0 +1,19 @@
+
+buttonRate.png
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+rateDown
+  rotate: false
+  xy: 1, 205
+  size: 600, 202
+  orig: 600, 202
+  offset: 0, 0
+  index: -1
+rateUp
+  rotate: false
+  xy: 1, 1
+  size: 600, 202
+  orig: 600, 202
+  offset: 0, 0
+  index: -1
